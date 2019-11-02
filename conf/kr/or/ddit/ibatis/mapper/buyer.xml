@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap     
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="buyer">
+	<typeAlias alias="BuyerVO" type="kr.or.ddit.vo.BuyerVO"/>
+	
+	<sql id="selectAll">
+		SELECT *
+		  FROM BUYER
+		 WHERE BUYER_DELETE = 'n' 
+	</sql>
+	
+	<select id="searchBuyer" parameterClass="map" resultClass="BuyerVO">
+	<include refid="selectAll"/>
+	WHERE BUYER_NAME LIKE '%'||#buyer#||'%'
+	</select>
+	
+	<select id="buyerList" resultClass="java.util.HashMap">
+		SELECT * 
+          FROM LPROD L INNER JOIN buyer b 
+                ON(L.LPROD_GU = b.buyer_LGU)
+         WHERE BUYER_DELETE = 'n'
+	</select> 
+	
+	<select id="buyerInfo" parameterClass="map" resultClass="java.util.HashMap">
+		SELECT *
+		  FROM LPROD L INNER JOIN BUYER B
+		       ON(L.LPROD_GU = B.BUYER_LGU)
+		 WHERE BUYER_ID = #buyer_id#
+	</select>
+	
+	<select id="getMaxId" parameterClass="String" resultClass="java.util.HashMap">
+   	select max(buyer_id)
+   	  from buyer
+	 where buyer_lgu = #buyer_lgu#
+   </select>
+	
+	<select id="getCode" parameterClass="map" resultClass="java.util.HashMap">
+      select buyer_lgu, lprod_nm, buyer_id
+        from lprod l inner join buyer b
+          on(l.lprod_gu = b.buyer_lgu)
+       where lprod_nm like '%'||#lprod_nm#||'%'
+   </select>
+	
+	<update id="updateBuyer" parameterClass="BuyerVO">
+		UPDATE BUYER
+		   SET BUYER_ID  =  #buyer_id#
+		      ,BUYER_NAME =  #buyer_name#
+		      <!-- ,BUYER_LGU =  #BUYER_LGU# -->
+		      ,BUYER_BANK =  #buyer_bank#
+		      ,BUYER_BANKNO =  #buyer_bankno#
+		      ,BUYER_BANKNAME =  #buyer_bankname#
+		      ,BUYER_ZIP =  #buyer_zip#
+		      ,BUYER_ADD1 =  #buyer_add1#
+		      ,BUYER_ADD2 =  #buyer_add2#
+		      ,BUYER_COMTEL =  #buyer_comtel#
+		      ,BUYER_FAX =  #buyer_fax#
+		      ,BUYER_MAIL =  #buyer_mail#
+		      ,BUYER_CHARGER =  #buyer_charger#
+		WHERE BUYER_ID = #buyer_id#
+		       
+	</update>
+	
+	<update id="deleteBuyer" parameterClass="map">
+		UPDATE BUYER
+		  SET BUYER_DELETE = 'y'
+		WHERE BUYER_ID = #buyer_id#
+	
+	</update>
+	
+	<insert id="insertBuyer" parameterClass="BuyerVO">
+		INSERT INTO BUYER(BUYER_ID, BUYER_NAME, BUYER_LGU, BUYER_BANK, BUYER_BANKNO, 
+							BUYER_BANKNAME, BUYER_ZIP, BUYER_ADD1, BUYER_ADD2, BUYER_COMTEL, BUYER_FAX, 
+							BUYER_MAIL, BUYER_CHARGER)
+		VALUES (#buyer_id#, #buyer_name#, #buyer_lgu#, #buyer_bank#, #buyer_bankno#, 
+							#buyer_bankname#, #buyer_zip#, #buyer_add1#, #buyer_add2#, #buyer_comtel#, #buyer_fax#, 
+							#buyer_mail#, #buyer_charger#)
+	</insert>
+</sqlMap>
